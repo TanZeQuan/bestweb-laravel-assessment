@@ -50,8 +50,8 @@ The application includes a RESTful API, an admin web interface, role-based acces
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
-cd BestWeb-Assessment
+git clone https://github.com/TanZeQuan/bestweb-laravel-assessment.git
+cd bestweb-laravel-assessment
 ```
 
 Replace `<repository-url>` with the actual GitHub repository URL.
