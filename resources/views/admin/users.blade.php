@@ -73,14 +73,11 @@
             </a>
         </div>
     </div>
-
     @if (session('success'))
         <div class="alert alert-success" role="alert">
             {{ session('success') }}
         </div>
     @endif
-
-   
     @if ($errors->any())
         <div class="alert alert-danger" role="alert">
             <strong>Validation failed:</strong>
@@ -92,8 +89,6 @@
             </ul>
         </div>
     @endif
-
-
         <!-- Status Filter -->
         <div class="card page-card shadow-sm mb-4">
             <div class="card-body">
