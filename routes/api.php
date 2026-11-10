@@ -11,10 +11,12 @@ Route::get('/user', function (Request $request) {
 // Public user list
 Route::get('/users', [UserController::class, 'index']);
 
-// Admin user management
+// Protected user management routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/users', [UserController::class, 'store']);
     Route::post('/users/bulk-delete', [UserController::class, 'bulkDestroy']);
+
+    Route::get('/users/export', [UserController::class, 'export']);
 
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::patch('/users/{user}', [UserController::class, 'update']);

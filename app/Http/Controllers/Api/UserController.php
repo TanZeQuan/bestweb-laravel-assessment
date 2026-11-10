@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exports\UsersExport;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BulkDeleteUsersRequest;
 use App\Http\Requests\ListUsersRequest;
@@ -10,6 +11,8 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class UserController extends Controller
 {
@@ -112,5 +115,12 @@ class UserController extends Controller
             'message' => 'Users deleted successfully',
             'deleted_count' => $deletedCount,
         ]);
+    }
+
+    public function export(Request $request): BinaryFileResponse
+    {
+        abort_unless($request->user()?->role === 'admin', 403);
+
+        return Excel::download(new UsersExport, 'users.xlsx');
     }
 }
