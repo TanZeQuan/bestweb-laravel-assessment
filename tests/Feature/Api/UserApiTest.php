@@ -611,4 +611,67 @@ class UserApiTest extends TestCase
         $this->getJson('/api/users/export')
             ->assertUnauthorized();
     }
+
+    public function test_inactive_admin_cannot_manage_users(): void
+    {
+        $admin = User::create([
+            'name' => 'Inactive Admin',
+            'email' => 'inactive.admin@example.test',
+            'phone_number' => '0141234567',
+            'password' => 'AdminPassword123',
+            'status' => 'inactive',
+        ]);
+
+        $admin->forceFill(['role' => 'admin'])->save();
+
+        $user = User::create([
+            'name' => 'Target User',
+            'email' => 'target@example.test',
+            'phone_number' => '0121234567',
+            'password' => 'TestPassword123',
+            'status' => 'active',
+        ]);
+
+        Sanctum::actingAs($admin);
+
+        // Inactive admins cannot create users.
+        $this->postJson('/api/users', [
+            'name' => 'Blocked User',
+            'email' => 'blocked@example.test',
+            'phone_number' => '0199999999',
+            'password' => 'TestPassword123',
+            'status' => 'active',
+        ])->assertForbidden();
+
+        // Inactive admins cannot access user details.
+        $this->getJson("/api/users/{$user->id}")
+            ->assertForbidden();
+
+        // Inactive admins cannot update users.
+        $this->patchJson("/api/users/{$user->id}", [
+            'name' => 'Changed Name',
+        ])->assertForbidden();
+
+        // Inactive admins cannot delete users.
+        $this->deleteJson("/api/users/{$user->id}")
+            ->assertForbidden();
+
+        // Inactive admins cannot bulk delete users.
+        $this->postJson('/api/users/bulk-delete', [
+            'user_ids' => [$user->id],
+        ])->assertForbidden();
+
+        // Inactive admins cannot export Excel.
+        $this->getJson('/api/users/export')
+            ->assertForbidden();
+
+        // Verify that the rejected requests did not modify data.
+        $this->assertNotSoftDeleted('users', [
+            'id' => $user->id,
+        ]);
+
+        $this->assertDatabaseMissing('users', [
+            'email' => 'blocked@example.test',
+        ]);
+    }
 }

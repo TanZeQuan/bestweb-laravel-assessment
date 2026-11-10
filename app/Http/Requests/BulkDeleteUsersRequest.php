@@ -9,7 +9,8 @@ class BulkDeleteUsersRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->role === 'admin';
+        return $this->user()?->role === 'admin'
+            && $this->user()?->status === 'active';
     }
 
     public function rules(): array

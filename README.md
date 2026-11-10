@@ -239,8 +239,8 @@ Run Laravel Pint:
 
 Latest verified local results:
 
-- 33 tests passed
-- 102 assertions
+- 34 tests passed
+- Automated tests covering CRUD, authentication, authorization and security
 
 ## Security and Design Decisions
 
@@ -291,7 +291,3 @@ tests/
     Admin/
     Api/
 ```
-
-## Assessment
-
-Developed as a technical assessment project for BestWeb Technologies.

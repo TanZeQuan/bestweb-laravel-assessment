@@ -50,7 +50,7 @@ class UserController extends Controller
 
     public function show(Request $request, User $user): JsonResponse
     {
-        abort_unless($request->user()?->role === 'admin', 403);
+        abort_unless($request->user()?->role === 'admin' && $request->user()?->status === 'active', 403);
 
         return response()->json([
             'data' => $user->only([
@@ -82,7 +82,7 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user): JsonResponse
     {
-        abort_unless($request->user()?->role === 'admin', 403);
+        abort_unless($request->user()?->role === 'admin' && $request->user()?->status === 'active', 403);
 
         // Prevent admin from deleting their own account
         abort_if(
@@ -119,7 +119,7 @@ class UserController extends Controller
 
     public function export(Request $request): BinaryFileResponse
     {
-        abort_unless($request->user()?->role === 'admin', 403);
+        abort_unless($request->user()?->role === 'admin' && $request->user()?->status === 'active', 403);
 
         return Excel::download(new UsersExport, 'users.xlsx');
     }
