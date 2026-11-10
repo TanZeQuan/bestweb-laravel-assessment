@@ -1,58 +1,296 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# BestWeb User Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based User Management System developed for the BestWeb Technologies Laravel Developer Assessment.
 
-## About Laravel
+The application includes a RESTful API, an admin web interface, role-based access control, user management, Excel export, API documentation, and automated tests.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Tech Stack
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 13 / PHP
+- MySQL
+- Laravel Blade + Bootstrap 5
+- Laravel Sanctum
+- Laravel Excel
+- L5-Swagger (OpenAPI)
+- PHPUnit
+- SQLite (in-memory testing database)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+### Admin Web Interface
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- Admin login and logout
+- User listing with status filtering
+- Pagination
+- Create and edit users
+- Unique email and phone number validation
+- Soft delete users
+- Bulk delete users
+- Export users to Excel
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### RESTful API
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- Public user listing with limited fields
+- Admin-only user creation, details, updates and deletion
+- Status filtering and pagination
+- Soft delete and bulk delete
+- Excel export
+- Form Request validation
+- Sanctum authentication for protected endpoints
 
-## Agentic Development
+## Requirements
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+- PHP and Composer
+- MySQL
+- Required PHP extensions
+- A supported local development environment
+
+## Installation
+
+### 1. Clone the repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <repository-url>
+cd BestWeb-Assessment
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Replace `<repository-url>` with the actual GitHub repository URL.
 
-## Contributing
+### 2. Install dependencies
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+composer install
+```
 
-## Code of Conduct
+### 3. Configure environment
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Copy `.env.example` to `.env`.
 
-## Security Vulnerabilities
+On Windows PowerShell:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```powershell
+Copy-Item .env.example .env
+```
 
-## License
+Generate an application key:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+php artisan key:generate
+```
+
+### 4. Configure MySQL
+
+Create a new MySQL database named `bestweb_assessment`.
+
+Update `.env` with your database credentials:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bestweb_assessment
+DB_USERNAME=your_database_username
+DB_PASSWORD=your_database_password
+```
+
+Do not commit the `.env` file.
+
+### 5. Run migrations
+
+```bash
+php artisan migrate
+```
+
+### 6. Start the application
+
+```bash
+php artisan serve
+```
+
+The application will be available at:
+
+http://127.0.0.1:8000
+
+## Admin Account Setup
+
+Create an admin account using Laravel Tinker:
+
+```bash
+php artisan tinker
+```
+
+Run these commands one at a time:
+
+```php
+$password = \Illuminate\Support\Str::password(18);
+
+$admin = \App\Models\User::create(['name' => 'Admin', 'email' => 'admin@example.test', 'phone_number' => '0100000001', 'password' => $password, 'status' => 'active']);
+
+$admin->forceFill(['role' => 'admin'])->save();
+
+$password;
+```
+
+Save the generated password securely. It is displayed only for local setup and should not be committed to the repository.
+
+Admin login:
+
+http://127.0.0.1:8000/login
+
+## API Endpoints
+
+| Method | Endpoint | Access | Description |
+|---|---|---|---|
+| GET | `/api/users` | Public | List users |
+| POST | `/api/users` | Admin | Create user |
+| GET | `/api/users/{id}` | Admin | View user details |
+| PATCH | `/api/users/{id}` | Admin | Update user |
+| DELETE | `/api/users/{id}` | Admin | Soft delete user |
+| POST | `/api/users/bulk-delete` | Admin | Bulk delete users |
+| GET | `/api/users/export` | Admin | Download Excel file |
+
+### Filtering and Pagination
+
+Example:
+
+```http
+GET /api/users?status=active&per_page=10&page=1
+```
+
+Supported status values:
+
+- `active`
+- `inactive`
+
+The API returns paginated results.
+
+### Bulk Delete Request
+
+```json
+{
+  "user_ids": [2, 3, 4]
+}
+```
+
+Protected API endpoints require Sanctum bearer-token authentication.
+
+## API Authentication
+
+For local API testing, an admin API token can be generated using Tinker:
+
+```php
+$admin = \App\Models\User::where('email', 'admin@example.test')->firstOrFail();
+
+$token = $admin->createToken('api-testing')->plainTextToken;
+
+$token;
+```
+
+Use the generated token in the Authorization header:
+
+```http
+Authorization: Bearer YOUR_TOKEN
+```
+
+Keep tokens private. Revoke testing tokens when they are no longer needed.
+
+The application does not provide a public API login or token-issuance endpoint.
+
+## Swagger Documentation
+
+Generate the OpenAPI documentation:
+
+```bash
+php artisan l5-swagger:generate
+```
+
+Open Swagger UI:
+
+http://127.0.0.1:8000/api/documentation
+
+Protected endpoints require an admin bearer token.
+
+## Automated Testing
+
+PHPUnit is used for automated Feature Tests.
+
+The testing environment uses SQLite in-memory through `phpunit.xml`, separately from the MySQL development database.
+
+Run all tests:
+
+```bash
+php artisan test
+```
+
+Run individual test suites:
+
+```bash
+php artisan test tests/Feature/Api/UserApiTest.php
+php artisan test tests/Feature/Admin/AdminAuthTest.php
+php artisan test tests/Feature/Admin/AdminUserTest.php
+```
+
+Run Laravel Pint:
+
+```bash
+./vendor/bin/pint --test
+```
+
+Latest verified local results:
+
+- 33 tests passed
+- 102 assertions
+
+## Security and Design Decisions
+
+- Admin web authentication uses Laravel sessions.
+- Protected API routes use Laravel Sanctum.
+- Only admins can manage users.
+- The public user list returns limited fields and excludes email, phone number and password.
+- Form Requests validate user input.
+- Email addresses and phone numbers must be unique.
+- Passwords are stored as hashes.
+- SoftDeletes preserves deleted records.
+- Admin self-deletion is blocked.
+- Blade forms use CSRF protection.
+- Deleted users are excluded from normal listings and Excel exports.
+
+## Assumptions
+
+- Public API access is limited to the minimal user listing endpoint.
+- User management and Excel export require admin authentication.
+- New users receive the default `user` role.
+- Excel exports include non-deleted users and are not restricted by the current frontend status filter.
+- Bulk deletion applies only to the submitted user IDs.
+- Admin accounts are initialized manually for assessment purposes.
+
+## Project Structure
+
+```text
+app/
+  Exports/
+  Http/
+    Controllers/
+      Admin/
+      Api/
+    Requests/
+  Models/
+  Swagger/
+
+resources/
+  views/
+    admin/
+
+routes/
+  api.php
+  web.php
+
+tests/
+  Feature/
+    Admin/
+    Api/
+```
+
+## Assessment
+
+Developed as a technical assessment project for BestWeb Technologies.
